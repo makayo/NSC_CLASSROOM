@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "description": "Language list shared between NSC_CLASSROOM and OCE_TRANSLATOR. Keep in sync.",
+    "version": "1.0"
+  },
+  "languages": [
+    {"code":"es",    "name":"Spanish",             "native":"Español",           "dir":"ltr", "tts":"es-MX",       "welcome":"Bienvenido"},
+    {"code":"zh-CN", "name":"Chinese (Mandarin)",  "native":"中文（普通话）",      "dir":"ltr", "tts":"zh-CN",       "welcome":"欢迎"},
+    {"code":"zh-HK", "name":"Chinese (Cantonese)", "native":"中文（廣東話）",      "dir":"ltr", "tts":"zh-HK",       "welcome":"歡迎"},
+    {"code":"vi",    "name":"Vietnamese",           "native":"Tiếng Việt",        "dir":"ltr", "tts":"vi-VN",       "welcome":"Chào mừng"},
+    {"code":"ar",    "name":"Arabic",               "native":"العربية",           "dir":"rtl", "tts":"ar-SA",       "welcome":"أهلاً بك"},
+    {"code":"fa",    "name":"Farsi",                "native":"فارسی",             "dir":"rtl", "tts":"fa-IR",       "welcome":"خوش آمدید"},
+    {"code":"so",    "name":"Somali",               "native":"Soomaali",          "dir":"ltr", "tts":"so-SO",       "welcome":"Soo dhawow"},
+    {"code":"am",    "name":"Amharic",              "native":"አማርኛ",             "dir":"ltr", "tts":"am-ET",       "welcome":"እንኳን ደህና መጡ"},
+    {"code":"tl",    "name":"Tagalog",              "native":"Filipino / Tagalog", "dir":"ltr", "tts":"fil-PH",     "welcome":"Maligayang pagdating"}
+  ]
+}

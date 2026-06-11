@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "description": "Verified OCE&E / workforce domain terms. Pre-processed before translation API calls so these terms render correctly in all languages. Keep in sync with OCE_TRANSLATOR content files.",
+    "version": "1.0",
+    "review_note": "All translations require native-speaker verification before classroom use."
+  },
+  "terms": [
+    {
+      "en": "WorkSource",
+      "es": "WorkSource",
+      "zh-CN": "WorkSource",
+      "zh-HK": "WorkSource",
+      "vi": "WorkSource",
+      "ar": "WorkSource",
+      "fa": "WorkSource",
+      "so": "WorkSource",
+      "am": "WorkSource",
+      "tl": "WorkSource"
+    },
+    {
+      "en": "DSHS",
+      "note": "Keep in Latin script in all languages per OCE&E content rules"
+    },
+    {
+      "en": "EBT",
+      "note": "Keep in Latin script — Electronic Benefits Transfer"
+    },
+    {
+      "en": "SNAP",
+      "note": "Keep in Latin script — Supplemental Nutrition Assistance Program"
+    },
+    {
+      "en": "TANF",
+      "note": "Keep in Latin script — Temporary Assistance for Needy Families"
+    },
+    {
+      "en": "BFET",
+      "note": "Keep in Latin script — Basic Food Employment and Training"
+    },
+    {
+      "en": "WorkFirst",
+      "note": "Keep in Latin script"
+    },
+    {
+      "en": "ctcLink",
+      "note": "Keep in Latin script — college student system"
+    },
+    {
+      "en": "DVR",
+      "note": "Keep in Latin script — Division of Vocational Rehabilitation"
+    },
+    {
+      "en": "DCS",
+      "note": "Keep in Latin script — Division of Child Support"
+    },
+    {
+      "en": "Opportunity Center",
+      "es": "Opportunity Center",
+      "zh-CN": "Opportunity Center（机会中心）",
+      "zh-HK": "Opportunity Center（機會中心）",
+      "vi": "Opportunity Center",
+      "ar": "Opportunity Center",
+      "fa": "Opportunity Center",
+      "so": "Opportunity Center",
+      "am": "Opportunity Center",
+      "tl": "Opportunity Center"
+    }
+  ]
+}

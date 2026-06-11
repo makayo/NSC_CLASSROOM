@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "description": "Student UI labels in all nine languages. Draft — pending native-speaker review.",
+    "version": "1.0"
+  },
+  "strings": {
+    "choose_language":       {"es":"Elige tu idioma","zh-CN":"选择您的语言","zh-HK":"選擇您的語言","vi":"Chọn ngôn ngữ","ar":"اختر لغتك","fa":"زبان خود را انتخاب کنید","so":"Dooro luqaddaada","am":"ቋንቋዎን ይምረጡ","tl":"Piliin ang iyong wika"},
+    "waiting":               {"es":"Esperando que comience la clase…","zh-CN":"等待课程开始…","zh-HK":"等待課堂開始…","vi":"Đang chờ lớp học bắt đầu…","ar":"في انتظار بدء الفصل…","fa":"در انتظار شروع کلاس…","so":"Sugaya in fasalku bilaabo…","am":"ክፍሉ እስኪጀምር እየጠበቀ ነው…","tl":"Naghihintay sa pagsisimula ng klase…"},
+    "class_ended":           {"es":"La clase ha terminado.","zh-CN":"课程已结束。","zh-HK":"課堂已結束。","vi":"Lớp học đã kết thúc.","ar":"انتهى الفصل.","fa":"کلاس پایان یافت.","so":"Fasalku wuu dhammaaday.","am":"ክፍሉ ተጠናቋል።","tl":"Tapos na ang klase."},
+    "download_guide":        {"es":"Descargar guía de estudio","zh-CN":"下载学习指南","zh-HK":"下載學習指南","vi":"Tải xuống hướng dẫn học","ar":"تنزيل دليل الدراسة","fa":"دانلود راهنمای مطالعه","so":"Soo degso hagaha barashada","am":"የጥናት መመሪያ አውርድ","tl":"I-download ang gabay sa pag-aaral"},
+    "print":                 {"es":"Imprimir","zh-CN":"打印","zh-HK":"列印","vi":"In","ar":"طباعة","fa":"چاپ","so":"Daabac","am":"አትም","tl":"I-print"},
+    "pause":                 {"es":"Pausar","zh-CN":"暂停","zh-HK":"暫停","vi":"Tạm dừng","ar":"إيقاف مؤقت","fa":"مکث","so":"Joogsii","am":"ለቅጽበት ቁም","tl":"I-pause"},
+    "resume":                {"es":"Reanudar","zh-CN":"继续","zh-HK":"繼續","vi":"Tiếp tục","ar":"استئناف","fa":"ادامه","so":"Soco","am":"ቀጥል","tl":"Ituloy"},
+    "instructor_paused":     {"es":"El instructor ha pausado.","zh-CN":"教师已暂停。","zh-HK":"導師已暫停。","vi":"Giảng viên đã tạm dừng.","ar":"المدرس في وضع الإيقاف المؤقت.","fa":"مدرس متوقف شد.","so":"Macallinka wuu joojiyay.","am":"አስተማሪው አቁሟል።","tl":"Nag-pause ang guro."},
+    "show_history":          {"es":"Ver historial","zh-CN":"查看历史记录","zh-HK":"查看歷史記錄","vi":"Xem lịch sử","ar":"عرض السجل","fa":"نمایش تاریخچه","so":"Taariikhda eeg","am":"ታሪክ ይመልከቱ","tl":"Tingnan ang kasaysayan"},
+    "study_guide_header":    {"es":"Guía de estudio","zh-CN":"学习指南","zh-HK":"學習指南","vi":"Hướng dẫn học","ar":"دليل الدراسة","fa":"راهنمای مطالعه","so":"Hagaha barashada","am":"የጥናት መመሪያ","tl":"Gabay sa pag-aaral"},
+    "prepared_by":           {"es":"Preparado por NSC Classroom Translation Tool","zh-CN":"由 NSC 课堂翻译工具生成","zh-HK":"由 NSC 課堂翻譯工具生成","vi":"Được tạo bởi NSC Classroom Translation Tool","ar":"تم إعداده بواسطة NSC Classroom Translation Tool","fa":"تهیه شده توسط NSC Classroom Translation Tool","so":"Waxaa diyaariyay NSC Classroom Translation Tool","am":"በ NSC Classroom Translation Tool ተዘጋጅቷል","tl":"Inihanda ng NSC Classroom Translation Tool"},
+    "end_of_transcript":     {"es":"Fin de la transcripción.","zh-CN":"转录结束。","zh-HK":"轉錄結束。","vi":"Kết thúc bản ghi.","ar":"نهاية النص.","fa":"پایان رونوشت.","so":"Dhammaadka qoraalka.","am":"ቅጂው ተጠናቋል።","tl":"Katapusan ng transcript."}
+  }
+}

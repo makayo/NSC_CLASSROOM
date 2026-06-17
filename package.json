@@ -1,0 +1,19 @@
+{
+  "name": "nsc-classroom",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Live multilingual classroom translation with headphone audio — North Seattle College",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.0",
+    "axios": "^1.7.2",
+    "qrcode": "^1.5.3"
+  }
+}

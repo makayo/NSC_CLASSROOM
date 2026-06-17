@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>NSC Classroom — Translation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:    #12161d;
+    --panel:  #1b2230;
+    --panel2: #202938;
+    --line:   #2c3647;
+    --paper:  #e9ecef;
+    --muted:  #8a93a6;
+    --brass:  #caa05a;
+    --brass-glow: #e3bd7c;
+    --teal:   #4fb8a4;
+    --alert:  #d6644a;
+    --caption-scale: 1;
+  }
+  html.theme-light{
+    --ink:    #f2f3f5;
+    --panel:  #ffffff;
+    --panel2: #eceef1;
+    --line:   #d7dae0;
+    --paper:  #1b2230;
+    --muted:  #6b7383;
+    --brass:  #a97b34;
+    --brass-glow: #c79552;
+    --teal:   #2f8f7e;
+    --alert:  #b8442f;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; padding:0; height:100%; }
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter', system-ui, sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .label-face{
+    font-family:'Barlow Condensed', sans-serif;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+  button:focus-visible, input:focus-visible{ outline:2px solid var(--brass-glow); outline-offset:2px; }
+
+  .app{ min-height:100vh; display:flex; flex-direction:column; }
+
+  /* ---------- persistent top bar (every view) ---------- */
+  .top-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.85rem 1rem;
+    flex-shrink:0;
+  }
+  .top-bar .brand{ font-size:0.72rem; color:var(--muted); letter-spacing:0.1em; }
+  .theme-btn{
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted);
+  }
+  .theme-btn svg{ width:18px; height:18px; }
+
+  main{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  .view{ display:none; flex:1; flex-direction:column; }
+  .view.active{ display:flex; }
+
+  /* ---------- language picker ---------- */
+  #view-picker{ padding:0.5rem 1.25rem 2rem; align-items:center; justify-content:center; }
+  #view-picker h1{
+    font-family:'Barlow Condensed', sans-serif; font-weight:700;
+    font-size:1.6rem; text-align:center; margin:0 0 1.4rem;
+  }
+  .lang-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(135px, 1fr));
+    gap:0.7rem;
+    width:100%;
+    max-width:640px;
+  }
+  .lang-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:1rem 0.6rem;
+    text-align:center;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .lang-card:hover, .lang-card:focus-visible{ border-color:var(--brass); }
+  .lang-card .native{ display:block; font-size:1.15rem; margin-bottom:0.3rem; line-height:1.3; }
+  .lang-card .english{ display:block; font-size:0.74rem; color:var(--muted); }
+
+  /* ---------- waiting ---------- */
+  #view-waiting{ align-items:center; justify-content:center; text-align:center; padding:2rem; }
+  .pulse-dot{
+    width:14px; height:14px; border-radius:50%; background:var(--brass);
+    margin:0 auto 1.4rem; animation:breathe 2.4s ease-in-out infinite;
+  }
+  @keyframes breathe{ 0%,100%{ opacity:0.4; transform:scale(0.85);} 50%{ opacity:1; transform:scale(1.15);} }
+  @media (prefers-reduced-motion: reduce){ .pulse-dot{ animation:none; } }
+  .waiting-text{ font-size:1.15rem; color:var(--muted); max-width:24rem; }
+
+  /* ---------- live caption screen ---------- */
+  #view-live{ position:relative; align-items:center; justify-content:center; padding:1.5rem; text-align:center; }
+  .caption-stage{
+    width:100%; max-width:46rem;
+    display:flex; align-items:center; justify-content:center;
+    min-height:40vh;
+  }
+  .caption-text{
+    font-size:calc(clamp(1.5rem, 6vw, 2.6rem) * var(--caption-scale));
+    line-height:1.4;
+    transition:opacity 0.25s ease;
+    word-break:break-word;
+  }
+  .caption-text.fade{ opacity:0; }
+  .caption-text strong{ color:var(--brass); font-weight:700; }
+  .caption-placeholder{ color:var(--muted); font-size:1.1rem; }
+
+  .pause-banner{
+    position:absolute; top:1rem; left:50%; transform:translateX(-50%);
+    background:var(--panel2); border:1px solid var(--line); border-radius:999px;
+    padding:0.45rem 1.1rem; font-size:0.82rem; color:var(--muted);
+  }
+
+  .history-panel{
+    width:100%; max-width:46rem; max-height:26vh; overflow-y:auto;
+    margin-top:1rem; padding:0.8rem 1rem;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    text-align:left;
+  }
+  html[dir="rtl"] .history-panel{ text-align:right; }
+  .history-line{ font-size:0.84rem; color:var(--muted); margin-bottom:0.5rem; line-height:1.5; }
+  .history-line:last-child{ color:var(--paper); }
+  .history-line strong{ color:var(--brass); }
+
+  .gear-btn{
+    position:fixed; bottom:1.1rem; right:1.1rem;
+    width:46px; height:46px; border-radius:50%;
+    background:var(--panel); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted);
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+  }
+  html[dir="rtl"] .gear-btn{ right:auto; left:1.1rem; }
+  .gear-btn svg{ width:20px; height:20px; }
+  .gear-btn.disconnected{ color:var(--alert); border-color:var(--alert); }
+  .gear-btn .alert-dot{
+    position:absolute; top:-3px; right:-3px; width:10px; height:10px;
+    border-radius:50%; background:var(--alert); border:2px solid var(--ink);
+    display:none;
+  }
+  .gear-btn.has-alert .alert-dot{ display:block; }
+
+  /* ---------- ended ---------- */
+  #view-ended{ align-items:center; justify-content:center; text-align:center; padding:2rem; }
+  #view-ended h1{
+    font-family:'Barlow Condensed', sans-serif; font-weight:700; font-size:1.7rem; margin:0 0 0.6rem;
+  }
+  #view-ended p{ color:var(--muted); margin-bottom:1.6rem; }
+  .primary-btn{
+    background:var(--brass); color:#1a1408; font-weight:600;
+    padding:0.85rem 1.6rem; border-radius:8px; font-size:0.96rem;
+  }
+  .secondary-btn{
+    margin-top:0.8rem; background:transparent; color:var(--paper);
+    border:1px solid var(--line); padding:0.8rem 1.5rem; border-radius:8px; font-size:0.92rem;
+  }
+
+  /* ---------- settings drawer ---------- */
+  .drawer-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,0.45);
+    opacity:0; transition:opacity 0.2s ease; pointer-events:none;
+  }
+  .drawer-backdrop.open{ opacity:1; pointer-events:auto; }
+
+  .drawer{
+    position:fixed; left:0; right:0; bottom:0;
+    background:var(--panel); border-top:1px solid var(--line);
+    border-radius:16px 16px 0 0;
+    padding:0.6rem 1.25rem 1.6rem;
+    transform:translateY(105%);
+    transition:transform 0.25s ease;
+    max-height:80vh; overflow-y:auto;
+    max-width:560px; margin:0 auto;
+  }
+  .drawer.open{ transform:translateY(0); }
+  .drawer-handle{
+    width:36px; height:4px; border-radius:2px; background:var(--line);
+    margin:0.4rem auto 1.1rem;
+  }
+  .drawer-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.75rem 0; border-bottom:1px solid var(--line);
+    font-size:0.92rem;
+  }
+  .drawer-row:last-child{ border-bottom:none; }
+  .drawer-action{
+    background:var(--panel2); border:1px solid var(--line);
+    border-radius:6px; padding:0.45rem 0.8rem; font-size:0.84rem; color:var(--paper);
+  }
+  .slider-row input[type="range"]{ width:55%; accent-color:var(--brass); }
+  .font-btns{ display:flex; gap:0.5rem; }
+  .font-btns button{
+    width:32px; height:32px; border-radius:6px; background:var(--panel2);
+    border:1px solid var(--line); font-size:0.85rem; color:var(--paper);
+  }
+
+  .toggle-btn{
+    width:44px; height:26px; border-radius:999px; background:var(--panel2);
+    border:1px solid var(--line); position:relative; padding:0;
+    transition:background 0.15s;
+  }
+  .toggle-btn .toggle-knob{
+    position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%;
+    background:var(--muted); transition:transform 0.15s, background 0.15s;
+  }
+  .toggle-btn[aria-pressed="true"]{ background:var(--brass); }
+  .toggle-btn[aria-pressed="true"] .toggle-knob{ transform:translateX(18px); background:#1a1408; }
+
+  .voice-note{
+    font-size:0.8rem; color:var(--alert); padding:0.5rem 0 0.2rem; line-height:1.5;
+  }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="top-bar">
+    <span class="brand label-face">NSC Classroom</span>
+    <button id="themeBtn" class="theme-btn" aria-label="Switch appearance">
+      <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      <svg id="themeIconSun" class="hidden" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <main>
+
+    <section id="view-picker" class="view">
+      <h1>Choose your language</h1>
+      <div class="lang-grid" id="langGrid"></div>
+    </section>
+
+    <section id="view-waiting" class="view">
+      <div class="pulse-dot"></div>
+      <p class="waiting-text" id="waitingText">Waiting for class to start…</p>
+    </section>
+
+    <section id="view-live" class="view">
+      <div id="pauseBanner" class="pause-banner hidden"></div>
+      <div class="caption-stage">
+        <div id="captionText" class="caption-text">
+          <span class="caption-placeholder" id="captionPlaceholder"></span>
+        </div>
+      </div>
+      <div id="historyPanel" class="history-panel hidden"></div>
+    </section>
+
+    <section id="view-ended" class="view">
+      <h1 id="endedHeading">Class is over</h1>
+      <p id="endedSub"></p>
+      <button id="downloadGuideBtn" class="primary-btn">Download study guide</button>
+      <button id="printGuideBtn" class="secondary-btn">Print</button>
+    </section>
+
+  </main>
+
+  <button id="gearBtn" class="gear-btn hidden" aria-label="Settings">
+    <span class="alert-dot"></span>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z" stroke="currentColor" stroke-width="1.5"/><path d="M19.4 13.6a1.6 1.6 0 0 0 .3 1.8l.1.1a1.9 1.9 0 1 1-2.7 2.7l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5v.3a1.9 1.9 0 0 1-3.8 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a1.9 1.9 0 1 1-2.7-2.7l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1h-.3a1.9 1.9 0 0 1 0-3.8h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1A1.9 1.9 0 1 1 7.5 3.2l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5v-.3a1.9 1.9 0 0 1 3.8 0v.2a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a1.9 1.9 0 1 1 2.7 2.7l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1h.3a1.9 1.9 0 0 1 0 3.8h-.2a1.6 1.6 0 0 0-1.5 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+  </button>
+
+</div>
+
+<div id="drawerBackdrop" class="drawer-backdrop"></div>
+<div id="drawer" class="drawer">
+  <div class="drawer-handle"></div>
+
+  <div class="drawer-row" id="rowChangeLang">
+    <span>Change language</span>
+    <button id="changeLangBtn" class="drawer-action">Change</button>
+  </div>
+
+  <div class="drawer-row" id="rowAudio">
+    <span>Audio</span>
+    <button id="audioToggleBtn" class="toggle-btn" aria-pressed="true"><span class="toggle-knob"></span></button>
+  </div>
+  <div id="voiceUnavailableNote" class="voice-note hidden"></div>
+
+  <div class="drawer-row slider-row" id="rowVolume">
+    <span>Volume</span>
+    <input type="range" id="volumeSlider" min="0" max="100" value="100" />
+  </div>
+
+  <div class="drawer-row slider-row" id="rowSpeed">
+    <span>Speed</span>
+    <input type="range" id="speedSlider" min="50" max="150" value="90" />
+  </div>
+
+  <div class="drawer-row" id="rowFont">
+    <span>Text size</span>
+    <div class="font-btns">
+      <button id="fontSmallerBtn" aria-label="Smaller text">A−</button>
+      <button id="fontBiggerBtn" aria-label="Larger text">A+</button>
+    </div>
+  </div>
+
+  <div class="drawer-row" id="rowHistory">
+    <span id="historyLabel">Recent lines</span>
+    <button id="historyToggleBtn" class="toggle-btn" aria-pressed="false"><span class="toggle-knob"></span></button>
+  </div>
+</div>
+
+<script src="/shared/studyguide.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------------
+  // Language metadata — fetched from content/languages.json + ui-strings.json
+  // ---------------------------------------------------------------------
+  let LANGS = [
+    { code:'es', name:'Spanish', native:'Español', dir:'ltr', tts:'es-MX' },
+    { code:'zh-CN', name:'Chinese (Mandarin)', native:'中文（普通话）', dir:'ltr', tts:'zh-CN' },
+    { code:'zh-HK', name:'Chinese (Cantonese)', native:'中文（廣東話）', dir:'ltr', tts:'zh-HK' },
+    { code:'vi', name:'Vietnamese', native:'Tiếng Việt', dir:'ltr', tts:'vi-VN' },
+    { code:'ar', name:'Arabic', native:'العربية', dir:'rtl', tts:'ar-SA' },
+    { code:'fa', name:'Farsi', native:'فارسی', dir:'rtl', tts:'fa-IR' },
+    { code:'so', name:'Somali', native:'Soomaali', dir:'ltr', tts:'so-SO' },
+    { code:'am', name:'Amharic', native:'አማርኛ', dir:'ltr', tts:'am-ET' },
+    { code:'tl', name:'Tagalog', native:'Filipino / Tagalog', dir:'ltr', tts:'fil-PH' },
+  ];
+  let UI_STRINGS = {}; // filled from content/ui-strings.json; falls back to English literals if missing
+
+  Promise.all([
+    fetch('/content/languages.json').then((r) => r.json()).catch(() => null),
+    fetch('/content/ui-strings.json').then((r) => r.json()).catch(() => null),
+  ]).then(([langData, stringData]) => {
+    if (langData && Array.isArray(langData.languages) && langData.languages.length) {
+      LANGS = langData.languages;
+    }
+    if (stringData && stringData.strings) UI_STRINGS = stringData.strings;
+    buildLanguageGrid();
+    applyUiStrings();
+  });
+
+  function t(key, fallback) {
+    const entry = UI_STRINGS[key];
+    if (entry && entry[currentLang]) return entry[currentLang];
+    return fallback;
+  }
+
+  // ---------------------------------------------------------------------
+  // Persisted preferences
+  // ---------------------------------------------------------------------
+  const PREFS_KEY = 'nsc_student_prefs';
+  function loadPrefs() {
+    try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; } catch { return {}; }
+  }
+  function savePrefs(patch) {
+    const merged = Object.assign(loadPrefs(), patch);
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(merged)); } catch { /* storage unavailable — ok to skip */ }
+    return merged;
+  }
+  const prefs = loadPrefs();
+
+  let currentLang = prefs.lang || null;
+  let audioEnabled = prefs.audioEnabled !== undefined ? prefs.audioEnabled : true;
+  let volume = prefs.volume !== undefined ? prefs.volume : 100;
+  let speed = prefs.speed !== undefined ? prefs.speed : 90;
+  let fontScale = prefs.fontScale || 1;
+  let historyOn = false;
+
+  // ---------------------------------------------------------------------
+  // Theme
+  // ---------------------------------------------------------------------
+  function applyTheme(theme) {
+    document.documentElement.classList.toggle('theme-light', theme === 'light');
+    document.getElementById('themeIconMoon').classList.toggle('hidden', theme === 'light');
+    document.getElementById('themeIconSun').classList.toggle('hidden', theme !== 'light');
+  }
+  applyTheme(prefs.theme || 'dark');
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const next = document.documentElement.classList.contains('theme-light') ? 'dark' : 'light';
+    applyTheme(next);
+    savePrefs({ theme: next });
+  });
+
+  // ---------------------------------------------------------------------
+  // View switching
+  // ---------------------------------------------------------------------
+  const VIEWS = ['view-picker', 'view-waiting', 'view-live', 'view-ended'];
+  function showView(id) {
+    VIEWS.forEach((v) => document.getElementById(v).classList.toggle('active', v === id));
+    document.getElementById('gearBtn').classList.toggle('hidden', id === 'view-picker' || id === 'view-ended');
+  }
+
+  // ---------------------------------------------------------------------
+  // Language picker
+  // ---------------------------------------------------------------------
+  function buildLanguageGrid() {
+    const grid = document.getElementById('langGrid');
+    grid.innerHTML = '';
+    LANGS.forEach((lang) => {
+      const card = document.createElement('button');
+      card.className = 'lang-card';
+      card.innerHTML =
+        `<span class="native" dir="${lang.dir}">${escapeHtml(lang.native)}</span>` +
+        `<span class="english">${escapeHtml(lang.name)}</span>`;
+      card.addEventListener('click', () => selectLanguage(lang.code));
+      grid.appendChild(card);
+    });
+  }
+
+  function langByCode(code) {
+    return LANGS.find((l) => l.code === code) || null;
+  }
+
+  function selectLanguage(code) {
+    const isChange = !!currentLang && currentLang !== code;
+    currentLang = code;
+    savePrefs({ lang: code });
+    document.documentElement.dir = (langByCode(code) || {}).dir || 'ltr';
+    checkVoiceAvailability();
+    applyUiStrings();
+    showView('view-waiting'); // optimistic — server will confirm session_started or waiting
+
+    if (isChange) {
+      sendWs({ type: 'change_language', lang: code });
+    } else if (ws && ws.readyState === WebSocket.OPEN) {
+      sendWs({ type: 'join', lang: code });
+    } else {
+      connectWs(resolvedBase, code);
+    }
+    closeDrawer();
+  }
+
+  function applyUiStrings() {
+    document.getElementById('waitingText').textContent = t('waiting', 'Waiting for class to start…');
+    document.getElementById('endedHeading').textContent = t('class_ended', 'Class is over.');
+    document.getElementById('downloadGuideBtn').textContent = t('download_guide', 'Download study guide');
+    document.getElementById('printGuideBtn').textContent = t('print', 'Print');
+    document.getElementById('historyLabel').textContent = t('show_history', 'Recent lines');
+  }
+
+  // ---------------------------------------------------------------------
+  // WebSocket
+  // ---------------------------------------------------------------------
+  let ws = null;
+  let resolvedBase = null;
+  let reconnectTimer = null;
+
+  function resolveWsBase() {
+    if (location.protocol === 'file:') return null;
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    return `${proto}://${location.host}`;
+  }
+
+  function connectWs(base, lang) {
+    resolvedBase = base;
+    const url = `${base}/ws?role=student${lang ? `&lang=${encodeURIComponent(lang)}` : ''}`;
+    ws = new WebSocket(url);
+    setGearConnected(false);
+
+    ws.onopen = () => setGearConnected(true);
+
+    ws.onmessage = (event) => {
+      let msg;
+      try { msg = JSON.parse(event.data); } catch { return; }
+      handleServerMessage(msg);
+    };
+
+    ws.onclose = () => {
+      setGearConnected(false);
+      reconnectTimer = setTimeout(() => connectWs(resolvedBase, currentLang), 2500);
+    };
+    ws.onerror = () => { /* onclose handles retry */ };
+  }
+
+  function sendWs(message) {
+    if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(message));
+  }
+
+  function setGearConnected(connected) {
+    document.getElementById('gearBtn').classList.toggle('disconnected', !connected);
+  }
+
+  function handleServerMessage(msg) {
+    if (msg.type === 'waiting') {
+      showView('view-waiting');
+    } else if (msg.type === 'session_started') {
+      transcriptHistory.length = 0;
+      document.getElementById('historyPanel').innerHTML = '';
+      sessionStartedAt = Date.now();
+      sessionCourseName = msg.courseName || '';
+      setCaption('', []);
+      showView('view-live');
+    } else if (msg.type === 'caption') {
+      onCaption(msg);
+    } else if (msg.type === 'mic_paused') {
+      const banner = document.getElementById('pauseBanner');
+      banner.textContent = t('instructor_paused', 'The instructor has paused.');
+      banner.classList.remove('hidden');
+    } else if (msg.type === 'mic_resumed') {
+      document.getElementById('pauseBanner').classList.add('hidden');
+    } else if (msg.type === 'session_ended') {
+      showView('view-ended');
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Caption display + history + study guide accumulation
+  // ---------------------------------------------------------------------
+  const transcriptHistory = []; // { time, ts, text, terms } — also feeds the study guide
+  const MAX_HISTORY_SHOWN = 10;
+
+  function setCaption(text, terms) {
+    const el = document.getElementById('captionText');
+    el.classList.add('fade');
+    setTimeout(() => {
+      el.innerHTML = text ? window.StudyGuide.applyBold(text, terms) : '';
+      el.classList.remove('fade');
+    }, 150);
+  }
+
+  function renderHistory() {
+    const panel = document.getElementById('historyPanel');
+    const recent = transcriptHistory.slice(-MAX_HISTORY_SHOWN);
+    panel.innerHTML = recent
+      .map((e) => `<div class="history-line">${window.StudyGuide.applyBold(e.text, e.terms)}</div>`)
+      .join('');
+    panel.scrollTop = panel.scrollHeight;
+  }
+
+  function onCaption(msg) {
+    const entry = { time: msg.time, ts: msg.ts || Date.now(), text: msg.text, terms: msg.terms || [] };
+    transcriptHistory.push(entry);
+    setCaption(entry.text, entry.terms);
+    if (historyOn) renderHistory();
+    speakCaption(entry.text);
+  }
+
+  // ---------------------------------------------------------------------
+  // Text-to-speech
+  // ---------------------------------------------------------------------
+  let voiceAvailable = false;
+  let selectedVoice = null;
+
+  function findVoiceFor(ttsLocale) {
+    const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    if (!voices.length || !ttsLocale) return null;
+    const exact = voices.find((v) => v.lang.toLowerCase() === ttsLocale.toLowerCase());
+    if (exact) return exact;
+    const prefix = ttsLocale.split('-')[0].toLowerCase();
+    return voices.find((v) => v.lang.toLowerCase().startsWith(prefix)) || null;
+  }
+
+  function checkVoiceAvailability() {
+    const lang = langByCode(currentLang);
+    if (!lang || !window.speechSynthesis) { setVoiceState(false); return; }
+
+    const run = () => {
+      selectedVoice = findVoiceFor(lang.tts);
+      setVoiceState(!!selectedVoice);
+    };
+    run();
+    // Voice list often loads asynchronously on first page visit.
+    speechSynthesis.onvoiceschanged = run;
+    setTimeout(run, 800);
+  }
+
+  function setVoiceState(available) {
+    voiceAvailable = available;
+    const note = document.getElementById('voiceUnavailableNote');
+    const gear = document.getElementById('gearBtn');
+    if (!available) {
+      note.textContent = t('audio_unavailable', "Audio isn't available in this language on this computer — captions are still shown.");
+      note.classList.remove('hidden');
+      gear.classList.add('has-alert');
+    } else {
+      note.classList.add('hidden');
+      gear.classList.remove('has-alert');
+    }
+    updateAudioToggleUi();
+  }
+
+  function speakCaption(text) {
+    if (!window.speechSynthesis || !audioEnabled || !voiceAvailable || !text) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (selectedVoice) u.voice = selectedVoice;
+    const lang = langByCode(currentLang);
+    if (lang) u.lang = lang.tts;
+    u.rate = speed / 100;
+    u.volume = volume / 100;
+    speechSynthesis.speak(u);
+  }
+
+  // ---------------------------------------------------------------------
+  // Settings drawer
+  // ---------------------------------------------------------------------
+  const drawer = document.getElementById('drawer');
+  const drawerBackdrop = document.getElementById('drawerBackdrop');
+
+  function isLiveActive() {
+    return document.getElementById('view-live').classList.contains('active');
+  }
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    drawerBackdrop.classList.add('open');
+    const live = isLiveActive();
+    document.getElementById('rowAudio').classList.toggle('hidden', !live);
+    document.getElementById('voiceUnavailableNote').classList.toggle('hidden', voiceAvailable || !live);
+    document.getElementById('rowVolume').classList.toggle('hidden', !live);
+    document.getElementById('rowSpeed').classList.toggle('hidden', !live);
+    document.getElementById('rowFont').classList.toggle('hidden', !live);
+    document.getElementById('rowHistory').classList.toggle('hidden', !live);
+  }
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    drawerBackdrop.classList.remove('open');
+  }
+  document.getElementById('gearBtn').addEventListener('click', openDrawer);
+  drawerBackdrop.addEventListener('click', closeDrawer);
+
+  document.getElementById('changeLangBtn').addEventListener('click', () => {
+    closeDrawer();
+    showView('view-picker');
+  });
+
+  function updateAudioToggleUi() {
+    const btn = document.getElementById('audioToggleBtn');
+    btn.setAttribute('aria-pressed', String(audioEnabled && voiceAvailable));
+    btn.disabled = !voiceAvailable;
+    btn.style.opacity = voiceAvailable ? '1' : '0.5';
+  }
+  document.getElementById('audioToggleBtn').addEventListener('click', () => {
+    if (!voiceAvailable) return;
+    audioEnabled = !audioEnabled;
+    savePrefs({ audioEnabled });
+    if (!audioEnabled && window.speechSynthesis) speechSynthesis.cancel();
+    updateAudioToggleUi();
+  });
+
+  const volumeSlider = document.getElementById('volumeSlider');
+  volumeSlider.value = String(volume);
+  volumeSlider.addEventListener('input', () => { volume = Number(volumeSlider.value); savePrefs({ volume }); });
+
+  const speedSlider = document.getElementById('speedSlider');
+  speedSlider.value = String(speed);
+  speedSlider.addEventListener('input', () => { speed = Number(speedSlider.value); savePrefs({ speed }); });
+
+  function applyFontScale() {
+    document.documentElement.style.setProperty('--caption-scale', String(fontScale));
+  }
+  applyFontScale();
+  document.getElementById('fontBiggerBtn').addEventListener('click', () => {
+    fontScale = Math.min(1.6, +(fontScale + 0.15).toFixed(2));
+    applyFontScale(); savePrefs({ fontScale });
+  });
+  document.getElementById('fontSmallerBtn').addEventListener('click', () => {
+    fontScale = Math.max(0.75, +(fontScale - 0.15).toFixed(2));
+    applyFontScale(); savePrefs({ fontScale });
+  });
+
+  document.getElementById('historyToggleBtn').addEventListener('click', () => {
+    historyOn = !historyOn;
+    document.getElementById('historyToggleBtn').setAttribute('aria-pressed', String(historyOn));
+    document.getElementById('historyPanel').classList.toggle('hidden', !historyOn);
+    if (historyOn) renderHistory();
+  });
+
+  // ---------------------------------------------------------------------
+  // Session ended — study guide
+  // ---------------------------------------------------------------------
+  let sessionCourseName = '';
+  let sessionStartedAt = null;
+
+  function studyGuideMeta() {
+    const lang = langByCode(currentLang) || {};
+    const durationMin = sessionStartedAt ? Math.max(1, Math.round((Date.now() - sessionStartedAt) / 60000)) : null;
+    return {
+      courseName: sessionCourseName || 'NSC Classroom',
+      date: new Date().toLocaleDateString(),
+      duration: durationMin ? `${durationMin} min` : '',
+      languageNative: lang.native || currentLang,
+      languageName: lang.name || '',
+      languageCode: currentLang,
+      dir: lang.dir || 'ltr',
+      strings: {
+        study_guide_header: t('study_guide_header', 'Study guide'),
+        end_of_transcript: t('end_of_transcript', 'End of session transcript.'),
+        prepared_by: t('prepared_by', 'Prepared by NSC Classroom Translation Tool'),
+      },
+    };
+  }
+
+  document.getElementById('downloadGuideBtn').addEventListener('click', () => {
+    window.StudyGuide.download(studyGuideMeta(), transcriptHistory);
+  });
+  document.getElementById('printGuideBtn').addEventListener('click', () => {
+    window.StudyGuide.openPrintWindow(studyGuideMeta(), transcriptHistory);
+  });
+
+  // ---------------------------------------------------------------------
+  // Utility
+  // ---------------------------------------------------------------------
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  // ---------------------------------------------------------------------
+  // Boot
+  // ---------------------------------------------------------------------
+  const autoBase = resolveWsBase();
+  resolvedBase = autoBase || 'ws://localhost:3000';
+  if (currentLang) {
+    document.documentElement.dir = (langByCode(currentLang) || {}).dir || 'ltr';
+    checkVoiceAvailability();
+  }
+  updateAudioToggleUi();
+
+  if (currentLang) {
+    connectWs(resolvedBase, currentLang);
+    showView('view-waiting');
+  } else {
+    showView('view-picker');
+  }
+})();
+</script>
+</body>
+</html>

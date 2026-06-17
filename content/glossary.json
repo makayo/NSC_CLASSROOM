@@ -1,69 +1,29 @@
 {
   "_meta": {
-    "description": "Verified OCE&E / workforce domain terms. Pre-processed before translation API calls so these terms render correctly in all languages. Keep in sync with OCE_TRANSLATOR content files.",
+    "description": "Tech/app vocabulary for the Northstar Digital Literacy computer-basics class. NOT shared with OCE_TRANSLATOR — that kiosk uses a separate OCE&E benefits/workforce glossary, since the two tools cover different subject matter. Pre-processed before translation API calls so these terms aren't mangled by the translator.",
     "version": "1.0",
-    "review_note": "All translations require native-speaker verification before classroom use."
+    "review_note": "All entries below are app/platform proper nouns and acronyms that are conventionally left in Latin script across languages. Confirm with a native speaker for each language before classroom use, especially for Arabic/Farsi (RTL embedding) and Chinese (some platforms have an official localized name in addition to the Latin-script one)."
   },
   "terms": [
+    { "en": "Wi-Fi", "note": "Keep in Latin script — universally used as-is" },
+    { "en": "USB", "note": "Keep in Latin script — acronym" },
+    { "en": "Bluetooth", "note": "Keep in Latin script — brand name" },
+    { "en": "PDF", "note": "Keep in Latin script — acronym" },
+    { "en": "Google", "note": "Keep in Latin script — brand name" },
+    { "en": "Gmail", "note": "Keep in Latin script — brand name" },
+    { "en": "Google Drive", "note": "Keep in Latin script — brand name" },
+    { "en": "Google Docs", "note": "Keep in Latin script — brand name" },
+    { "en": "YouTube", "note": "Keep in Latin script — brand name" },
+    { "en": "Zoom", "note": "Keep in Latin script — brand name" },
+    { "en": "Chrome", "note": "Keep in Latin script — brand name" },
+    { "en": "Facebook", "note": "Keep in Latin script — brand name" },
+    { "en": "Microsoft Word", "note": "Keep in Latin script — brand name; multi-word so it won't collide with the ordinary word 'word'" },
+    { "en": "Microsoft Excel", "note": "Keep in Latin script — brand name" },
     {
-      "en": "WorkSource",
-      "es": "WorkSource",
-      "zh-CN": "WorkSource",
-      "zh-HK": "WorkSource",
-      "vi": "WorkSource",
-      "ar": "WorkSource",
-      "fa": "WorkSource",
-      "so": "WorkSource",
-      "am": "WorkSource",
-      "tl": "WorkSource"
+      "en": "Windows",
+      "caseSensitive": true,
+      "note": "Keep in Latin script — OS name. Case-sensitive match so lowercase 'windows' (the room feature) still translates normally; capitalized mid-sentence false positives are a small residual risk, see server/lib/glossary.js"
     },
-    {
-      "en": "DSHS",
-      "note": "Keep in Latin script in all languages per OCE&E content rules"
-    },
-    {
-      "en": "EBT",
-      "note": "Keep in Latin script — Electronic Benefits Transfer"
-    },
-    {
-      "en": "SNAP",
-      "note": "Keep in Latin script — Supplemental Nutrition Assistance Program"
-    },
-    {
-      "en": "TANF",
-      "note": "Keep in Latin script — Temporary Assistance for Needy Families"
-    },
-    {
-      "en": "BFET",
-      "note": "Keep in Latin script — Basic Food Employment and Training"
-    },
-    {
-      "en": "WorkFirst",
-      "note": "Keep in Latin script"
-    },
-    {
-      "en": "ctcLink",
-      "note": "Keep in Latin script — college student system"
-    },
-    {
-      "en": "DVR",
-      "note": "Keep in Latin script — Division of Vocational Rehabilitation"
-    },
-    {
-      "en": "DCS",
-      "note": "Keep in Latin script — Division of Child Support"
-    },
-    {
-      "en": "Opportunity Center",
-      "es": "Opportunity Center",
-      "zh-CN": "Opportunity Center（机会中心）",
-      "zh-HK": "Opportunity Center（機會中心）",
-      "vi": "Opportunity Center",
-      "ar": "Opportunity Center",
-      "fa": "Opportunity Center",
-      "so": "Opportunity Center",
-      "am": "Opportunity Center",
-      "tl": "Opportunity Center"
-    }
+    { "en": "Northstar Digital Literacy", "note": "Keep in Latin script — curriculum/assessment program name" }
   ]
 }
